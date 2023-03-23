@@ -1,0 +1,55 @@
+version: '3.8'
+services:
+  topicos-db:
+    image: mysql:8.0
+    cap_add:
+      - SYS_NICE
+    restart: always
+    environment:
+      - MYSQL_DATABASE=topicosIA
+      - MYSQL_ROOT_PASSWORD=topicosIA
+    ports:
+      - '3306:3306'
+    networks:
+      - topicosIA
+    volumes:
+      - db:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+  topicos-training:
+    build:
+      context: ./train
+    depends_on:
+      - topicos-db
+    environment:
+      - USER_DB=root
+      - PASS_DB=topicosIA
+      - IP_SERVER=topicos-db
+      - NAME_DB=topicosIA
+    ports:
+      - '9090:8080'
+    networks:
+      - topicosIA
+      - trainingIA
+    volumes:
+      - model:/train/model
+  topicos-infering:
+    build:
+      context: ./predict    
+    depends_on:
+      - topicos-training
+    ports:
+      - '9091:8082'
+    networks:
+      - trainingIA
+    volumes:
+      - model:/predict/model
+volumes:
+  db:
+    driver: local
+  model:
+    driver: local
+networks:
+  topicosIA:
+    external: true
+  trainingIA:
+    external: true

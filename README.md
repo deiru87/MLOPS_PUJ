@@ -34,3 +34,26 @@ execute
 ```
 docker run --name simple_model -p  8091:80 simple_model
 ```
+
+# Talleres
+
+Project with implementation of a ML-Model with docker compose
+
+Clone the project
+
+```
+git clone https://github.com/deiru87/MLOPS_PUJ.git
+```
+
+you have to be located in the directory of the project, so execute.
+
+```
+cd MLOPS_PUJ/Talleres
+```
+after, execute.
+
+```
+docker network create topicosIA
+docker network create trainingIA
+docker compose up &
+```
